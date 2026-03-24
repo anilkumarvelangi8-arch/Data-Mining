@@ -1,0 +1,37 @@
+import pandas as pd
+from mlxtend.frequent_patterns import fpgrowth
+from mlxtend.frequent_patterns import association_rules
+
+data = pd.read_csv("contact-lenses.csv")
+
+print("\nOriginal Dataset:\n")
+print(data.head())
+
+data_encoded = pd.get_dummies(data)
+
+print("\nDataset after One-Hot Encoding:\n")
+print(data_encoded.head())
+
+frequent_itemsets = fpgrowth(data_encoded, min_support=0.1, use_colnames=True)
+
+print("\nFrequent Itemsets Generated:\n")
+print(frequent_itemsets)
+
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
+
+print("\nAssociation Rules Generated:\n")
+print(rules[['antecedents','consequents','support','confidence','lift']])
+
+sorted_rules = rules.sort_values(by='confidence', ascending=False)
+
+print("\nTop Association Rules (Sorted by Confidence):\n")
+print(sorted_rules[['antecedents','consequents','support','confidence','lift']])
+
+print("\nInterpretation of Rules:\n")
+
+for index, rule in sorted_rules.iterrows():
+    print("If", list(rule['antecedents']),
+          "then", list(rule['consequents']),
+          "Support:", round(rule['support'],2),
+          "Confidence:", round(rule['confidence'],2),
+          "Lift:", round(rule['lift'],2))
