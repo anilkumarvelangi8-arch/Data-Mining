@@ -1,0 +1,46 @@
+import numpy as np
+
+X = np.array([
+    [2,10],
+    [2,5],
+    [8,4],
+    [5,8],
+    [7,5],
+    [6,4],
+    [1,2],
+    [4,9]
+])
+
+k = 2
+centroids = np.array([
+    [2,10],
+    [5,8]
+])
+
+print("Initial Centroids:")
+print(centroids)
+
+for iteration in range(5):
+    clusters = [[] for _ in range(k)]
+
+    for point in X:
+        distances = [np.linalg.norm(point - centroid) for centroid in centroids]
+        cluster_index = np.argmin(distances)
+        clusters[cluster_index].append(point)
+
+    print("\nIteration:", iteration+1)
+    for i in range(k):
+        print("Cluster", i+1, ":", clusters[i])
+
+    new_centroids = []
+    for cluster in clusters:
+        new_centroids.append(np.mean(cluster, axis=0))
+    new_centroids = np.array(new_centroids)
+
+    print("Updated Centroids:")
+    print(new_centroids)
+
+    if np.all(centroids == new_centroids):
+        break
+
+    centroids = new_centroids
